@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Love Letter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#ffdee9;
+      --bg2:#b5fffc;
+      --paper:#fffaf5;
+      --ink:#422323;
+      --accent:#ff4d6d;
+      --accent-dark:#c9184a;
+      --shadow: 0 20px 50px rgba(0,0,0,.15);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial; color:var(--ink);}
+    body{overflow-x:hidden; background: radial-gradient(1200px 800px at 20% 20%, #ffe0ec 0%, transparent 40%), radial-gradient(1200px 800px at 80% 80%, #d3fff9 0%, transparent 35%), linear-gradient(135deg,var(--bg1),var(--bg2));}
+
+    /* Common */
+    .wrap{min-height:100%; display:grid; place-items:center; padding:40px 16px; position:relative; z-index:1; }
+
+    /* Login Page */
+    #loginPage{ display:grid; place-items:center; text-align:center; }
+    #loginPage input{ padding:10px 16px; margin:6px 0; border-radius:12px; border:1px solid #ccc; width:200px; font-size:16px;}
+    #loginPage button{ cursor:pointer; border:0; padding:10px 16px; border-radius:999px; background:var(--accent); color:white; font-weight:600; margin-top:10px; }
+    #loginPage button:hover{ filter:brightness(1.1); }
+    
+
+    /* My Heart & Letter Page */
+    .hearts,.flowers{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+    .heart{ position:absolute; width:25px; height:25px; transform:rotate(45deg); opacity:.6; animation: floatUp linear infinite; }
+    .heart:before,.heart:after{ content:''; position:absolute; width:18px; height:18px; background:var(--accent); border-radius:50%; }
+    .heart:before{ left:-9px; }
+    .heart:after{ top:-9px; }
+    @keyframes floatUp{0%{ transform: translateY(100vh) rotate(45deg) scale(.8); opacity:0 }10%{ opacity:.7 }100%{ transform: translateY(-10vh) rotate(45deg) scale(1.2); opacity:0 }}
+    .flower{ position:absolute; font-size:22px; animation: floatFlower 10s linear forwards; }
+    @keyframes floatFlower {0%{ transform:translateY(100vh) scale(.7); opacity:0 }10%{opacity:1}100%{ transform:translateY(-10vh) scale(1.3); opacity:0 }}
+
+    .letter{ width:min(780px, 92vw); background:var(--paper); border-radius:22px; box-shadow:var(--shadow); position:relative; overflow:hidden; border:1px solid rgba(0,0,0,.06); display:none; }
+    .letter::before{ content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0)); pointer-events:none; }
+    .ribbon{ position:absolute; inset:0; background: repeating-linear-gradient(135deg, transparent 0 18px, rgba(255,77,109,.08) 18px 36px); mask: linear-gradient(transparent 0, black 32px, black calc(100% - 32px), transparent 100%); -webkit-mask: linear-gradient(transparent 0, black 32px, black calc(100% - 32px), transparent 100%); }
+    .header{ padding:28px 28px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .title{ font-family:"Great Vibes", cursive; font-size:40px; line-height:1; color:var(--accent-dark); }
+    .date{ font-size:14px; opacity:.7 }
+    .paper{ padding:10px 28px 28px; }
+    .salutation{ font-family:"Great Vibes", cursive; font-size:36px; margin:12px 0 6px; color:var(--accent-dark); }
+    .body-text{ font-size:18px; line-height:1.9; margin:10px 0; white-space:pre-line; }
+    .signature{ margin-top:20px; font-family:"Great Vibes", cursive; font-size:34px; color:var(--accent-dark); }
+    .envelope{ position:relative; background:linear-gradient(180deg, #fff 0%, #fff6f6 100%); border-radius:18px; border:1px dashed rgba(201,24,74,.35); padding:16px; margin:20px 0 6px; }
+    .envelope .bar{ display:flex; gap:10px; justify-content:space-between; align-items:center; }
+    .btn{ cursor:pointer; border:0; padding:10px 16px; border-radius:999px; background:var(--accent); color:white; font-weight:600; box-shadow:0 8px 20px rgba(201,24,74,.3); transition: transform .12s ease, filter .2s; }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+    .letter-content{ max-height:0; overflow:hidden; transition:max-height .7s ease; }
+    .letter.open .letter-content{ max-height:1600px; }
+  </style>
+</head>
+<body>
+  <!-- Login Page -->
+  <div class="wrap" id="loginPage">
+    <h1>Welcome 💖</h1>
+    <p>Enter your name to unlock my heart</p>
+    <input type="text" id="userName" placeholder="Your Name"/>
+    <br/>
+    <button id="loginBtn">Enter</button>
+  </div>
+
+  <!-- My Heart Page -->
+  <div class="wrap">
+    <div class="hearts" id="hearts"></div>
+    <div class="flowers" id="flowers"></div>
+
+    <article class="letter" id="letter">
+      <div class="ribbon"></div>
+      <header class="header">
+        <h1 class="title">My Heart Chello Baby Kutty Thangoo Pattu </h1><br>
+        <p>Our love blossomed, now a new chapter begins with hope and smiles.🌸</p>
+        <div class="date" id="today"></div>
+      </header>
+
+      <div class="paper">
+        <div class="envelope">
+          <div class="bar">
+            <div class="meta">Tap to open and read</div>
+            <button class="btn" id="openBtn">Open Letter</button>
+          </div>
+        </div>
+
+        <div class="letter-content" id="content">
+          <h2 class="salutation">Dear <span id="dear-name"></span>,</h2>
+          <p class="body-text" id="para1">
+          My love, every moment of our journey together feels so beautiful. Every second with you is like magic, every smile of yours shines brighter than the sun, and every word you say makes my heart bloom with happiness. I promise to keep loving you more with each passing day. You are my forever.
+        </p>
+
+        <p class="body-text" id="para2">உன் வருகையிலே என் உலகம் மாறுதே,
+உன் சிரிப்பிலே என் உயிர் பாடுதே…
+உன் சொற்களில் என் கனவுகள் மலருதே,
+உன் காதலிலே என் இதயம் நிறைவுதே…
+</p>
+
+        <p class="body-text" id="para3">உன் பார்வையில் என் வாழ்வு மறைந்திருக்கு,
+உன் தொட்டதில் என் மனம் உருகிருக்கு…
+உன் சுவாசம் என் உயிரின் ராகமாயிருக்கு,
+உன் காதல் தான் என் வாழ்க்கை பாதையாகிருக்கு…
+</p>
+
+<center><p>CHANDRA PRAKASH ✨💙💮 SUJI</p></center>
+
+          <div class="signature">Forever yours,<br/>— <span id="from-name">Your Secret Admirer</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bgMusic" loop>
+    <source src="pookal-pookum-tharunam.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const loginPage = document.getElementById("loginPage");
+    const letter = document.getElementById("letter");
+    const loginBtn = document.getElementById("loginBtn");
+    const userName = document.getElementById("userName");
+    const dearName = document.getElementById("dear-name");
+    const bgMusic = document.getElementById("bgMusic");
+
+    loginBtn.addEventListener("click", ()=>{
+      const name = userName.value.trim();
+      if(name){
+        dearName.textContent = name;
+        loginPage.style.display = "none";
+        letter.style.display = "block";
+        bgMusic.play().catch(()=>{});
+      } else {
+        alert("Please enter your name 💌");
+      }
+    });
+
+    const openBtn = document.getElementById('openBtn');
+    openBtn.addEventListener('click', () => {
+      letter.classList.toggle('open');
+      openBtn.textContent = letter.classList.contains('open') ? 'Close Letter' : 'Open Letter';
+    });
+
+    // Floating hearts
+    const hearts = document.getElementById('hearts');
+    function makeHeart() {
+      const h = document.createElement('div');
+      h.className = 'heart';
+      const size = Math.random()*14 + 10;
+      h.style.width = h.style.height = size + 'px';
+      h.style.left = Math.random()*100 + 'vw';
+      h.style.animationDuration = (Math.random()*6 + 6) + 's';
+      h.style.opacity = (Math.random()*0.6 + 0.2).toFixed(2);
+      hearts.appendChild(h);
+      setTimeout(()=> h.remove(), 12000);
+    }
+    setInterval(makeHeart, 900);
+
+    // Floating flowers
+    const flowers = document.getElementById('flowers');
+    const flowerSymbols = ["🌸","🌹","💖","🌼","🌺","💞","❣️","💓","💗","❤️","🩷","🧡","💛","💚","💙","🩵","💜","🫂","💫","✨"];
+    function makeFlower(){
+      const f = document.createElement('div');
+      f.className = 'flower';
+      f.textContent = flowerSymbols[Math.floor(Math.random()*flowerSymbols.length)];
+      f.style.left = Math.random()*100 + 'vw';
+      f.style.fontSize = (20 + Math.random()*20) + 'px';
+      flowers.appendChild(f);
+      setTimeout(()=> f.remove(), 10000);
+    }
+    setInterval(makeFlower, 1500);
+
+    // Date
+    const d = new Date();
+    document.getElementById('today').textContent = d.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' });
+  </script>
+</body>
+</html>
